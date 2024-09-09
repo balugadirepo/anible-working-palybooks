@@ -1,0 +1,20 @@
+---
+- name: Check if user 'balu' exists
+  hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Check user existence
+      command: "id balu"
+      register: user_check_result
+      ignore_errors: yes
+
+    - name: Display result
+      debug:
+        msg: "User 'balu' does exist."
+      when: user_check_result.rc == 0
+
+    - name: Display result when user not found
+      debug:
+        msg: "User 'balu' does not exist."
+      when: user_check_result.rc != 0
