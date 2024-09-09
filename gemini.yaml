@@ -1,0 +1,13 @@
+---
+- name: Check for User "balu"
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Check if user "balu" exists
+      become: yes
+      command: id balu
+      register: user_check
+
+    - name: Print result
+      debug:
+        msg: "User 'balu' exists: {{ user_check.rc == 0 }}"
