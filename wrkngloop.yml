@@ -6,9 +6,9 @@
   tasks:
     - name: Install packages
       ansible.builtin.yum:
-        name: "{{ item.name }}"
-        state: "{{ item.state }}"
+        name: "{{ item.anything1 }}"
+        state: "{{ item.anything2 }}"
       loop:
-        - { name: 'httpd' , state: 'present' }
-        - { name: 'vim' , state: 'absent' }
-        - { name: 'wget' , state: 'removed' }
+        - { anything1: 'httpd' , anything2: 'present' }
+        - { anything1: 'vim' , anything2: 'absent' }
+        - { anything1: 'wget' , anything2: 'removed' }
