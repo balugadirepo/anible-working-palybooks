@@ -1,0 +1,55 @@
+---
+- hosts: all
+  become: true
+  gather_facts: yes
+
+  tasks:
+
+  - name: Install Apache on Debian/Ubuntu 
+    apt:
+      name: apache2
+      state: latest
+    when: ansible_os_family == 'Debian'
+    notify: 
+      - Start Apache service
+
+  - name: Install Apache on RedHat/CentOS
+    yum:  
+      name: httpd
+      state: latest
+    when: ansible_os_family == 'RedHat'
+    notify:
+      - Start httpd service
+      
+  - name: Remove wget debian
+    apt:  
+      name: wget
+      state: absent
+    when: ansible_os_family == 'Debian'
+  
+  - name: remove wget on redhat
+    yum:  
+      name: wget
+      state: absent
+    when: ansible_os_family == 'RedHat'
+
+  
+  handlers:
+
+  - name: Start httpd service
+    service:  
+      name: httpd
+      state: restarted
+    when: ansible_os_family != 'Debian'
+
+  - name: Start Apache service
+    service:
+      name: apache2   
+      state: restarted
+    when: ansible_os_family == 'Debian'
+
+
+
+  
+
+  
