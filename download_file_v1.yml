@@ -1,0 +1,31 @@
+---
+- name: Download and unzip files from the internet
+  hosts: all
+  gather_facts: no
+  tasks:
+      
+    - name: Download a file from the internet
+      get_url:
+        url: "http://example.com"       # URL of the file to download
+        dest: "/pathofzipfile/example.zip"                     # Destination path on the remote host
+        force: yes
+        validate_certs: no
+
+    - name: Create the destination directory if it does not exist
+      file:
+        path: "/path2directory"           # Path of the directory to be created
+        state: directory                          # Ensures it's a directory
+                                      # Permissions of the directory
+            
+    - name: Ensure unzip is installed
+      become: yes
+      package:
+        name: unzip
+        state: present
+        
+
+    - name: Unzip the downloaded file
+      unarchive:
+        src: "/path2downloadedzipfile"                      # The downloaded ZIP file
+        dest: "/path2directoryofextraction"           # Directory to extract the contents to
+        remote_src: yes                           # Indicates that the archive is already on the remote machine
