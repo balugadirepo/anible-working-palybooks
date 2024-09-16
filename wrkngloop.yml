@@ -1,6 +1,6 @@
 ---
 - name: Install multiple packages
-  hosts: webserver
+  hosts: all
   become: yes
   gather_facts: no
   tasks:
