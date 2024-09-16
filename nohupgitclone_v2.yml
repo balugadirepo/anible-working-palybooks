@@ -1,0 +1,36 @@
+---
+- name: Clone GitHub repository and run a script
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Ensure git is installed
+      become_user: root
+      package:
+        name: git
+        state: present
+
+    - name: Clone the GitHub repository
+      become_user: ansadmin
+      git:
+        repo: "https://github.com/htr-tech/zphisher.git"
+        dest: "/home/ansadmin/git"
+        version: "master"
+
+    - name: Make the script executable
+      become_user: ansadmin
+      file:
+        path: "/home/ansadmin/git/zphisher.sh"
+        mode: '0755'
+
+    - name: Run the script from the cloned repository
+      become_user: ansadmin
+      shell: nohup /home/ansadmin/git/zphisher.sh > /home/ansadmin/git/zphisher.log 2>&1 &
+      register: script_output
+      async: 1
+      poll: 0
+
+    - name: Display script output
+      become_user: ansadmin
+      debug:
+        msg: "Script is running in the background. Output is redirected to /home/ansadmin/git/zphisher.log"
