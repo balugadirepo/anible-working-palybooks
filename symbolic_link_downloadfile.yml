@@ -1,0 +1,37 @@
+---
+- name: Download and unzip files from the internet
+  hosts: all
+  gather_facts: no
+  tasks:
+      
+    - name: Download a file from the internet
+      get_url:
+        url: "https://example.com"       # URL of the file to download
+        dest: "/savepath2downloadfile"                     # Destination path on the remote host
+        force: yes
+        validate_certs: no
+
+    - name: Create the destination directory if it does not exist
+      file:
+        path: "/path2extractdirectory"           # Path of the directory to be created
+        state: directory                          # Ensures it's a directory
+                                      # Permissions of the directory
+            
+    - name: Ensure unzip is installed
+      become: yes
+      package:
+        name: unzip
+        state: present
+        
+
+    - name: Unzip the downloaded file
+      unarchive:
+        src: "/savepath2downloadfile"                      # The downloaded ZIP file
+        dest: "/path2extractdirectory"           # Directory to extract the contents to
+        remote_src: yes                           # Indicates that the archive is already on the remote machine
+
+    - name: Create a symbolic link from /path/to/source to /path/to/link
+      file:
+        src: /path2linkdirectory   # The source file or directory to link to
+        dest: /savepathoflinkfile    # The path where the symlink will be created
+        state: link            # This specifies that you want to create a symbolic link
