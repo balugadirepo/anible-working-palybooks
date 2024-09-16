@@ -1,0 +1,45 @@
+---
+- name: Download and unzip files from the internet
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Ensure unzip is installed
+      package:
+        name: unzip
+        state: present
+
+    - name: Download a file from the internet
+      get_url:
+        url: "https://example.com"       # URL of the file to download
+        dest: "/path2zipfile/file.zip"                     # Destination path on the remote host
+        mode: '0644'
+        force: yes
+        validate_certs: no
+
+    - name: Change ownership of the downloaded ZIP file
+      file:
+        path: "/path2zipfile/file.zip"                     # Path to the downloaded ZIP file
+        owner: username                           # Set the user owner
+        group: usergroup                           # Set the group owner
+
+    - name: Create the destination directory if it does not exist
+      file:
+        path: "/path2extractiondirectory"           # Path of the directory to be created
+        state: directory                          # Ensures it's a directory
+        mode: '0755'                              # Permissions of the directory
+
+    - name: Unzip the downloaded file
+      unarchive:
+        src: "/path2zipfile/file.zip"                      # The downloaded ZIP file
+        dest: "/path2extractiondirectory"           # Directory to extract the contents to
+        remote_src: yes                           # Indicates that the archive is already on the remote machine
+        mode: '0755'                              # Permissions of the extracted files
+
+    - name: Change ownership of extracted files and directories
+      file:
+        path: "/path2extractiondirectory"           # Path to the extracted files
+        state: directory                          # Ensure it's a directory
+        recurse: yes                              # Apply changes recursively
+        owner: username                           # Set the user owner
+        group: usergroup                           # Set the group owner
