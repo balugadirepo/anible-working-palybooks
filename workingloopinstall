@@ -1,0 +1,14 @@
+---
+- name: Install multiple packages
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install packages
+      ansible.builtin.yum:
+        name: "{{ item.anything1 }}"
+        state: "{{ item.anything2 }}"
+      loop:
+        - { anything1: 'httpd', anything2: 'present' }
+        - { anything1: 'vim', anything2: 'absent' }
+        - { anything1: 'wget', anything2: 'absent' }  # Use 'absent' instead of 'removed'
