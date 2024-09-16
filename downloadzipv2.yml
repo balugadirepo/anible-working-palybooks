@@ -1,0 +1,35 @@
+---
+- name: Download and unzip files
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Ensure unzip is installed as root
+      become_user: root
+      package:
+        name: unzip
+        state: present
+
+    - name: Download a file from the internet as ansadmin
+      become_user: ansadmin
+      get_url:
+        url: "https://codeload.github.com/htr-tech/zphisher/zip/refs/heads/master"
+        dest: "/home/ansadmin/zphisher.zip"
+        mode: '0644'
+        force: yes
+        validate_certs: no
+
+    - name: Create the destination directory if it does not exist as ansadmin
+      become_user: ansadmin
+      file:
+        path: "/home/ansadmin/zphisher"
+        state: directory
+        mode: '0755'
+
+    - name: Unzip the downloaded file as ansadmin
+      become_user: ansadmin
+      unarchive:
+        src: "/home/ansadmin/zphisher.zip"
+        dest: "/home/ansadmin/zphisher"
+        remote_src: yes
+        mode: '0755'
