@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: no
+  gather_facts: no
+  tasks:
+  - name: create file and add line
+    lineinfile:
+      path: /home/ansadmin/demo.txt
+      line: This is a new line
+      state: present
+      create: true
