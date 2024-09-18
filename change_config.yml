@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: no  # Set to yes if necessary
+  gather_facts: no
+  tasks:
+    - name: Change max_connections value in config file
+      ansible.builtin.lineinfile:
+        path: /home/ansadmin/demo.txt
+        regexp: '^max_connections='
+        line: 'max_connections=200'
