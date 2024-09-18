@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: no
+  gather_facts: no  
+  tasks: 
+    - name: Change multiple lines  
+      lineinfile:  
+        path: /home/ansadmin/demo.txt
+        line: "{{ item.line }}"
+        regexp: "{{ item.regexp }}"
+      loop:
+        - line: AllowPassword yes
+          regexp: ^AllowPassword
+        - line: PortForwarding yes
+          regexp: ^PortForwarding
+        - line: "PortNo: 8080"
+          regexp: ^PortNo
