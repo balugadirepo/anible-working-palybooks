@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: no  # Change to 'yes' if you need elevated privileges
+  gather_facts: no
+  tasks:
+    - name: Remove a specific line from the file
+      ansible.builtin.lineinfile:
+        path: /home/ansadmin/demo.txt
+        regexp: "^This is a new line$"  # Ensure the line is matched exactly
+        state: absent
