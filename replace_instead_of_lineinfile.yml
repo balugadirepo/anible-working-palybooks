@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: no  # Set to yes if necessary
+  gather_facts: no
+  tasks:
+    - name: Replace 'enabled' with 'disabled' in config file
+      ansible.builtin.replace:
+        path: /home/ansadmin/demo.txt
+        regexp: 'enabled'
+        replace: 'disabled'
