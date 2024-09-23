@@ -1,0 +1,35 @@
+---
+- name: Install and configure Tomcat on a remote server
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install Java
+      yum:
+        name: java-22-amazon-corretto-devel
+        state: present
+
+    - name: Install Tomcat
+      yum:
+        name: tomcat9
+        state: present
+
+    
+    
+    - name: Configure Tomcat users for Manager Script access
+      ansible.builtin.copy:
+        dest: /etc/tomcat9/tomcat-users.xml
+        content: |
+          <tomcat-users>
+            <role rolename="manager-gui"/>
+            <role rolename="manager-script"/>
+            <user username="balu" password="balu" roles="manager-gui,manager-script"/>
+          </tomcat-users>
+    
+
+
+    - name: Start and enable Tomcat service
+      systemd:
+        name: tomcat9
+        state: started
+        enabled: yes  
