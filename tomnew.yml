@@ -1,0 +1,53 @@
+---
+- name: Install and configure Tomcat9 with Manager App on a remote server
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install Java
+      yum:
+        name: java-22-amazon-corretto-devel
+        state: present
+
+    - name: Install a specific version of Tomcat9
+      yum:
+        name: 
+             - tomcat9-9.0.64-1.amzn2023.0.2   # Specify the version here
+             - tomcat9-admin-webapps-9.0.64-1.amzn2023.0.2
+             - tomcat9-webapps-9.0.64-1.amzn2023.0.2 
+        state: present
+
+    - name: Configure Tomcat users for Manager Script access
+      ansible.builtin.copy:
+        dest: /etc/tomcat9/tomcat-users.xml
+        content: |
+          <tomcat-users>
+            <role rolename="manager-gui"/>
+            <role rolename="manager-script"/>
+            <user username="balu" password="balu" roles="manager-gui,manager-script"/>
+          </tomcat-users>
+
+    - name: Change ownership of tomcat-users.xml to tomcat user
+      file:
+        path: /etc/tomcat9/tomcat-users.xml
+        owner: tomcat
+        group: tomcat        
+        mode: '0644'
+    
+    - name: Ensure the Manager App is accessible from all IPs by modifying the manager context XML
+      ansible.builtin.copy:
+        dest: /etc/tomcat9/Catalina/localhost/manager.xml
+        content: |
+          <Context privileged="true" antiResourceLocking="false" docBase="${catalina.home}/webapps/manager">
+            <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+                 allow=".*" />  # Allow access from all IPs
+          </Context>
+        owner: tomcat
+        group: tomcat
+        mode: '0644'
+
+    - name: Start and enable Tomcat9 service
+      systemd:
+        name: tomcat9
+        state: restarted
+        enabled: yes
